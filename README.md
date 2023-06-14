@@ -62,8 +62,5 @@ ESX (will be removed, only used in one function)
 *) Add knots as an option for velocity display
 
 *) Comment code... for everyone's sake...
-
-
-
-
+<br>
 **All credits go to [Ino](https://forum.cfx.re/u/Ino)!**
