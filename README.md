@@ -1,13 +1,11 @@
 # InoTechRadar
-Rework of the Great InoTechRadar "Radar and Sonar for Aircraft &amp; Boats" Script
-
 I decided to give this [resource](https://forum.cfx.re/t/beta-radar-and-sonar-for-aircraft-boats/17815) from 2017 a rework and fix the main error of the radar not working. Forks and commits are appreciated.
+
 
 # Requirements & Dependencies:
 ESX (will be removed, only used in one function)
 
 # Features:
-
 - Tracks other player-controlled aircraft and boats.
 - Toggleable interface display, which is maximized while in first person. (See example screenshot [#1](https://i.imgur.com/ZzXTtdx.jpg))
 - Different vehicles have different radar ranges and refresh rates. (Military vehicles are generally equipped with much stronger radar, for instance). 2D range checks are used for simplicity’s sake.
