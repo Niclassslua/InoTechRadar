@@ -20,27 +20,50 @@ ESX (will be removed, only used in one function)
 # Todos:
 
 *) Angle based radar 
+
 **) Animate radar sweep? Performance may be an issue for spam-updating html canvas
+
 **) Bonus points if sweep can be matched with physically visible radar on Predator.
+
 *) Client-side options
+
 *) Implement radar types for different identification & showing directional vectors
+
 *) Active & Passive SONAR
+
 **) Active range sonar would greatly boost range, but also reveal your own position to other sonar from far away
+
 **) Allow boats/subs without active SONAR to be invisible from passive SONAR while their engines are turned off (or going very slowly?)
+
 ***) Will need server-side code to propagate sonar status
+
 ***) Will need to ensure passengers in vehicles cannot change active sonar status, and get their own active sonar status from server.
+
 ***) There are currently no multi-person submarines, though.
+
 *) Possibly add propagation delay to SONAR to simulate speed of sound
+
 **) Investigate performance issues if this was to be implemented (10hz radius increase rate should be enough)
+
 **) Save vehicle identifier?
+
 **) Risks looking weird as fuck while turning
+
 *) Add static ground radar
+
 **) Add ground radar operation
+
 **) Add radar distribution system
+
 *) Add radar to certain dinghy variations (all seat variations)
+
 *) Take target signature into account?
+
 *) Would love some way to detect NPCs
+
 *) Add knots as an option for velocity display
+
 *) Comment code... for everyone's sake...
+
 
 **All credits go to [Ino](https://forum.cfx.re/u/Ino)!**
