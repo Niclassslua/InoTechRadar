@@ -1,5 +1,7 @@
 Config = {}
 
+Config.UsingESXAbove12 = false -- Are you using ESX above 1.2?
+
 Config.radarPenetrateMap = false -- Default: false
 Config.radarPenetrateVehicles = true -- Default: true. NOTE: Might not be working when on false, suggest leaving alone for now
 Config.radarPenetratePeds = true -- Default: true
