@@ -1,6 +1,10 @@
-ESX = nil
+local ESX = nil
 
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+if Config.UsingESXAbove12 then
+	ESX = exports["es_extended"]:getSharedObject()
+else
+	TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+end
 
 
 
