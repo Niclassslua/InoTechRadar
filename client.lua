@@ -1,13 +1,3 @@
-local ESX = nil
-
-if Config.UsingESXAbove12 then
-	ESX = exports["es_extended"]:getSharedObject()
-else
-	TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-end
-
-
-
 --
 --
 --
@@ -21,6 +11,7 @@ local convertRadarTable = false
 
 local testRayVehicle = nil
 local radarIsOpen = false
+local StaticradarIsOpen = false
 local currentlyInFirstPerson = false
 local canOpenRadar = false
 local localRadarData = {} --TODO: Populate this
@@ -28,7 +19,7 @@ local _radarEnabledVehicles = {} -- Init only table
 local lastRadarUpdate = 0
 local quickRadarInfoUpdate = false
 
-debugMode = false -- Bad things happen if you touch this.
+debugMode = true -- Bad things happen if you touch this.
 
 
 --[[ 
@@ -127,24 +118,6 @@ radarNames[1] = "radar"
 radarNames[2] = "radar"
 radarNames[3] = "sonar"
 
-staticRadarLocations = {}
-staticRadarLocations[1] = {
-	name="Los Santos International Airport", 
-	range=8500, 
-	frequency=3000, 
-	x=1275, 
-	y=-2450, 
-	z=100,
-}
-
-staticRadarLocations[2] = {
-	name="Fort Zancudo", 
-	range=10000, 
-	frequency=3000, 
-	x=-2500, 
-	y=-3300, 
-	z=115,
-}
 
 radarEnabledVehicles = {} -- Real table, do not touch
 
@@ -405,7 +378,19 @@ end
 
 function getFakeVehicle(vehicle)
 	local coords1 = GetEntityCoords(vehicle, false)
-	return {vehX = firstSpawnCoords.x - coords1.x, vehY = firstSpawnCoords.y - coords1.y, vehZ = firstSpawnCoords.z - coords1.z, vehClass=14, vehSpeed=230, vehName="KTL915"}
+	return {vehX = coords1.x, vehY = coords1.y, vehZ = coords1.z, vehClass=14, vehSpeed=230, vehName="KTL915"}
+end
+
+function GetPeds(onlyOtherPeds)
+	local peds, myPed, pool = {}, GetPlayerPed(-1), GetGamePool('CPed')
+
+	for i=1, #pool do
+        if ((onlyOtherPeds and pool[i] ~= myPed) or not onlyOtherPeds) then
+            table.insert(peds, pool[i])
+        end
+    end
+
+	return peds
 end
 
 function updateLocalRadarData(vehicle) -- Could use some tidying up tbh, split up into smaller functions.
@@ -414,7 +399,7 @@ function updateLocalRadarData(vehicle) -- Could use some tidying up tbh, split u
 	local radarType = getRadarType(vehicle)
 	local vehName = "UNKNOWN"
 
-	for playerNum, ped in pairs(ESX.Game.GetPeds(not debugMode)) do
+	for playerNum, ped in pairs(GetPeds(not debugMode)) do
 		-- print(playerNum, ped)
 		local otherVehicle = isPedValidRadarTarget(ped, radarType)
 		if otherVehicle ~= nil then
@@ -457,7 +442,7 @@ function updateRadarInfo(vehicle)
 	local forwardY = GetEntityForwardY(vehicle)
 	local yaw = math.atan(forwardY, forwardX)
 
-	-- print(range, freq, radarType, radarName, forwardX, forwardY, yaw)
+	print(range, freq, radarType, radarName, forwardX, forwardY, yaw)
 
 	SendNUIMessage({
 		command = "updateRadarInfo",
@@ -512,6 +497,66 @@ function setActiveSonar(active)
 	})
 end
 
+
+
+
+
+
+CreateThread(function()
+    if Config.staticRadars then
+        for k,v in pairs(Config.staticRadarLocations) do
+            if Config.staticRadarLocations[k].blip.enabled then
+                local blip = AddBlipForCoord(Config.staticRadarLocations[k].vector)
+                SetBlipSprite(blip, Config.staticRadarLocations[k].blip.sprite)
+                SetBlipColour(blip, Config.staticRadarLocations[k].blip.colour)
+                SetBlipScale(blip, Config.staticRadarLocations[k].blip.scale)
+                SetBlipAsShortRange(blip, true)
+                BeginTextCommandSetBlipName("STRING")
+                AddTextComponentString(Config.staticRadarLocations[k].blip.name)
+                EndTextCommandSetBlipName(blip)
+            end
+        end
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+function setStaticRadarOpen(enable, range, freq, radarType, radarName, forwardX, forwardY, yaw)
+
+	print(enable, range, freq, radarType, radarName, forwardX, forwardY, yaw)
+
+	if enable then
+
+		SendNUIMessage({
+			command = "updateRadarInfo",
+			range = range,
+			freq = freq,
+			yaw = yaw,
+			radarType = radarType,
+			radarName = radarName,
+			radarTargets = #localRadarData,
+		})
+
+	end
+
+	SendNUIMessage({
+		command = "setRadarOpen",
+		enable = enable,
+	})
+
+	StaticradarIsOpen = enable
+end
+
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(50)
@@ -527,7 +572,9 @@ Citizen.CreateThread(function()
 				end
 			end
 		else
-			setRadarOpen(false)
+			if not StaticradarIsOpen then
+				setRadarOpen(false)
+			end
 		end
 		-- if canOpenRadar == false and _canOpenRadar == true then -- Just entered radar capable vehicle
 		-- 	displayNotification("Vehicle has " .. getRadarName(vehicle) .. " capabilities. Press ~p~".. openRadarHotkeyName.. "~s~ (or "..openRadarHotkeyNameController..") to toggle.")
@@ -535,6 +582,44 @@ Citizen.CreateThread(function()
 		canOpenRadar = _canOpenRadar
     end
 end)
+
+
+local activestatic
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+
+		local ped = GetPlayerPed(-1)
+		local coords = GetEntityCoords(ped)
+
+		if Config.staticRadars then
+			for k,v in pairs(Config.staticRadarLocations) do
+				if GetDistanceBetweenCoords(coords, Config.staticRadarLocations[k].vector, true) <= 1.5 and not StaticradarIsOpen then
+					SetTextComponentFormat("STRING")
+					AddTextComponentString("Press ~INPUT_PICKUP~ to open the static radar")
+					DisplayHelpTextFromStringLabel(0, 0, 1, -1)
+
+					if IsControlJustPressed(0, 38) then
+						local forwardX = GetEntityForwardX(GetEntityCoords(ped))
+						local forwardY = GetEntityForwardY(GetEntityCoords(ped))
+						local yaw = math.atan(forwardY, forwardX)
+
+						activestatic = Config.staticRadarLocations[k]
+
+						setStaticRadarOpen(true, Config.staticRadarLocations[k].range, Config.staticRadarLocations[k].frequency, 1, "radar", forwardX, forwardY, yaw)
+					end
+				elseif activestatic ~= nil then
+					if GetDistanceBetweenCoords(coords, activestatic.vector, true) > 1.5 and StaticradarIsOpen then
+						setStaticRadarOpen(false)
+					end
+				end
+			end
+		end
+    end
+end)
+
+
 
 -- Citizen.CreateThread(function()
 --     while true do
