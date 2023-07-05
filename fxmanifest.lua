@@ -4,7 +4,13 @@ game 'gta5'
 
 client_scripts {
 	"config.lua",
-	"client.lua"
+	"client.lua",
+	"culling.lua"
+}
+
+client_scripts {
+	"config.lua",
+	"culling_sv.lua"
 }
 
 ui_page('html/radarPage.html')
