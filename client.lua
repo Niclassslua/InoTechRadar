@@ -268,22 +268,24 @@ end
 function isPedValidRadarTarget(ped, radarType)
 	if IsPedSittingInAnyVehicle(ped) then -- TODO: May need to add !IsPedInAnySub?
 		local vehicle = GetVehiclePedIsIn(ped, false)
-		if DoesEntityExist(vehicle) and isVehicleValidRadarTarget(vehicle, radarType) and GetVehicleEngineHealth(vehicle) ~= -4000.0 and GetVehicleBodyHealth(vehicle) ~= 0.0 and GetVehiclePetrolTankHealth(vehicle) ~= -1000.0 then
-			if GetPedInVehicleSeat(vehicle, -1) == ped then -- TODO: incl passengers?
-				local isSubmerged = isEntityUnderwater(vehicle)
-				if radarType == 3 then -- if SONAR
-					if IsEntityInWater(vehicle) then
-						if isSubmerged then
-							if isActiveSonar() or IsVehicleEngineOn(vehicle) then
+		if DoesEntityExist(vehicle) and isVehicleValidRadarTarget(vehicle, radarType) then
+			if GetVehicleEngineHealth(vehicle) ~= -4000.0 and GetVehicleBodyHealth(vehicle) ~= 0.0 and GetVehiclePetrolTankHealth(vehicle) ~= -1000.0 then
+				if GetPedInVehicleSeat(vehicle, -1) == ped then -- TODO: incl passengers?
+					local isSubmerged = isEntityUnderwater(vehicle)
+					if radarType == 3 then -- if SONAR
+						if IsEntityInWater(vehicle) then
+							if isSubmerged then
+								if isActiveSonar() or IsVehicleEngineOn(vehicle) then
+									return vehicle
+								end
+							else
 								return vehicle
 							end
-						else
+						end
+					else
+						if not isSubmerged then
 							return vehicle
 						end
-					end
-				else
-					if not isSubmerged then
-						return vehicle
 					end
 				end
 			end
@@ -564,11 +566,13 @@ Citizen.CreateThread(function()
 		local vehicle = nil
 		if IsPedSittingInAnyVehicle(GetPlayerPed(-1)) then
 			vehicle = GetVehiclePedIsIn(GetPlayerPed(-1), false)
-			if DoesEntityExist(vehicle) and isVehicleValidRadarTarget(vehicle, radarType) and GetVehicleEngineHealth(vehicle) ~= -4000.0 and GetVehicleBodyHealth(vehicle) ~= 0.0 and GetVehiclePetrolTankHealth(vehicle) ~= -1000.0 then
-				if isRadarCapable(vehicle) then
-					-- print("updateRadarData")
-					updateRadarData(vehicle)
-					_canOpenRadar = true
+			if DoesEntityExist(vehicle) then
+				if GetVehicleEngineHealth(vehicle) ~= -4000.0 and GetVehicleBodyHealth(vehicle) ~= 0.0 and GetVehiclePetrolTankHealth(vehicle) ~= -1000.0 then
+					if isRadarCapable(vehicle) then
+						-- print("updateRadarData")
+						updateRadarData(vehicle)
+						_canOpenRadar = true
+					end
 				end
 			end
 		else
