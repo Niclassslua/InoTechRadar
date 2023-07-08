@@ -444,7 +444,7 @@ function updateRadarInfo(vehicle)
 	local forwardY = GetEntityForwardY(vehicle)
 	local yaw = math.atan(forwardY, forwardX)
 
-	print(range, freq, radarType, radarName, forwardX, forwardY, yaw)
+	--print(range, freq, radarType, radarName, forwardX, forwardY, yaw)
 
 	SendNUIMessage({
 		command = "updateRadarInfo",
@@ -535,7 +535,7 @@ end)
 
 function setStaticRadarOpen(enable, range, freq, radarType, radarName, forwardX, forwardY, yaw)
 
-	print(enable, range, freq, radarType, radarName, forwardX, forwardY, yaw)
+	--print(enable, range, freq, radarType, radarName, forwardX, forwardY, yaw)
 
 	if enable then
 
