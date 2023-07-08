@@ -306,8 +306,8 @@ function drawInfoText(startTime, debugText) { //TODO clean this up, use measureT
 		drawText(tempTxt, 10, canvas.height - 44, infoTextFont)
 		drawText(sonarStatusText, 10 + ctx.measureText(tempTxt).width, canvas.height - 44, sonarStatusFont, sonarStatusColor)
 	}
-	drawText("Detections: " + radarTargets, 10, canvas.height - 44, infoTextFont)
-	drawText("Range: " + radarRange + " m", 10, canvas.height - 27, infoTextFont)
+	drawText("Erkennungen: " + radarTargets, 10, canvas.height - 44, infoTextFont)
+	drawText("Reichweite: " + radarRange + " m", 10, canvas.height - 27, infoTextFont)
 	drawText("Rate: " + getHz() + " Hz", 10, canvas.height - 10, infoTextFont)
 	if (debugText || false) {
 		drawText("CurTime: " + Date.now(), 10, canvas.height - 167, infoTextFont)
@@ -473,6 +473,13 @@ window.addEventListener('message', function(event) {
 	else if (item.command == "updateCamera") {
 		var _fp = item.isInFirstPerson
 		if (_fp != isInFirstPerson) {
+			
+			if (_fp) {
+				document.getElementById("radar").style.display = "none"
+			} else {
+				document.getElementById("radar").style.display = "block"
+			}
+			
 			isInFirstPerson = _fp
 			reDraw()
 		}
