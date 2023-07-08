@@ -19,11 +19,11 @@ ESX (will be removed, only used in one function)
 
 *) Angle based radar 
 
-**) Animate radar sweep? Performance may be an issue for spam-updating html canvas
+~**) Animate radar sweep? Performance may be an issue for spam-updating html canvas~ **Implemented in V1.0.0**
 
 **) Bonus points if sweep can be matched with physically visible radar on Predator.
 
-*) Client-side options
+~*) Client-side options~ **Implemented in V1.0.0**
 
 *) Implement radar types for different identification & showing directional vectors
 
@@ -41,13 +41,9 @@ ESX (will be removed, only used in one function)
 
 *) Possibly add propagation delay to SONAR to simulate speed of sound
 
-**) Investigate performance issues if this was to be implemented (10hz radius increase rate should be enough)
+~**) Investigate performance issues if this was to be implemented~ **V1.0.1**
 
-**) Save vehicle identifier?
-
-**) Risks looking weird as fuck while turning
-
-*) Add static ground radar
+~*) Add static ground radar~ **Implemented in V1.0.1**
 
 **) Add ground radar operation
 
@@ -57,10 +53,7 @@ ESX (will be removed, only used in one function)
 
 *) Take target signature into account?
 
-*) Would love some way to detect NPCs
-
 *) Add knots as an option for velocity display
 
-*) Comment code... for everyone's sake...
 
 **All credits go to [Ino](https://forum.cfx.re/u/Ino)!**
